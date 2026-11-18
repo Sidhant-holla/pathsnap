@@ -1,0 +1,12 @@
+All 18 features                    18 features | CV top1 0.8811 +/- 0.0280 | log loss 0.0733 | 46s
+without Relative distance          14 features | CV top1 0.8773 +/- 0.0277 | log loss 0.0781 | 41s
+without Direction                  15 features | CV top1 0.5912 +/- 0.0488 | log loss 0.1713 | 45s
+without Neighbourhood              16 features | CV top1 0.8696 +/- 0.0313 | log loss 0.0801 | 43s
+without Topology / geometry        13 features | CV top1 0.8718 +/- 0.0267 | log loss 0.0835 | 64s
+without GPS quality / motion       14 features | CV top1 0.8788 +/- 0.0283 | log loss 0.0783 | 48s
+only Relative distance              4 features | CV top1 0.5703 +/- 0.0706 | log loss 0.1983 | 49s
+only Direction                      3 features | CV top1 0.4598 +/- 0.0400 | log loss 0.2673 | 68s
+only Neighbourhood                  2 features | CV top1 0.5572 +/- 0.0767 | log loss 0.2082 | 33s
+only Topology / geometry            5 features | CV top1 0.4500 +/- 0.0128 | log loss 0.2425 | 31s
+only GPS quality / motion           4 features | CV top1 0.2411 +/- 0.0244 | log loss 0.3715 | 24s
+done
