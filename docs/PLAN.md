@@ -45,7 +45,19 @@ points to the known reference route. So one algorithm, explained once, does two 
   `.route` = ordered arc_ids actually driven.
 - **Longitude comes first.** Folium wants `[lat, lon]`.
 - Road-network files come **per trip**, so `arc_id` is only unique *within a trip*. Always key by `(trip_id, arc_id)`.
-- Never compute distances in degrees. Project each trip to UTM metres (`pyproj`, `estimate_utm_crs`).
+- Never compute distances in degrees. `geo.project_trip` projects each trip to its own UTM zone.
+
+**Verified facts about our data (checked on all 90 dev trips):**
+- 80 `train` and 10 `student_test` trips in `data/raw/<partition>/<trip_id>/`, every trip with all 4 files.
+  No NaNs, timestamps always increasing, all arc→node and route→arc references valid.
+- **Trips are worldwide**: latitudes −26 to 61, from Europe, Russia, the US and SE Asia. That's why we project per trip.
+  UTM vs exact WGS84 geodesic: ≤0.04% error. Haversine is *worse* (~0.3%) because it assumes a sphere.
+- **Networks are large and vary a lot**: 649–307k arcs per trip (median 19k). Candidate search needs a
+  spatial index (shapely `STRtree`), never a loop over all arcs.
+- **Tracks**: 262–19,313 points (median ~1,500). The median trip is 99% 1-second steps, but **42/90 trips have
+  gaps > 10 s**. Extremes: trip 90 has a 42 h gap, trip 78 has 14 h. Gap splitting is mandatory.
+- **Routes**: 59–2,266 arcs. Consecutive route arcs connect 98–100% of the time. The small breaks are a
+  reference-route limitation to mention in the report.
 - **Partitions:** 80 train / 10 student-test / 10 evaluator-test.
   - CV must be **GroupKFold by trip**. Fit scalers etc. *inside* the CV pipeline, on training folds only.
   - Student-test: model comparison only.
@@ -57,12 +69,22 @@ points to the known reference route. So one algorithm, explained once, does two 
 
 ## 4. Shared code contracts (follow these exactly, so everything plugs together)
 
-Everything lives in `src/pathsnap/`. Run scripts from the repo root with `python -m scripts.<name>`.
+Everything lives in `src/pathsnap/`, which is installed as a package (`pip install -e .`), so `import pathsnap`
+works from scripts, notebooks, the API and the UI. Run scripts from the repo root with `python -m scripts.<name>`.
+
+**Already built (shared foundation, read these first):**
+
+| Module | What it gives you |
+|--------|-------------------|
+| `config.py` | All paths (`DATA_ROOT`, `PROCESSED_DIR`, `RESULTS_DIR`, `MODELS_DIR`, `FIGURES_DIR`, `MAPS_DIR`), partition names, `SEED = 42`. `DATA_ROOT` can be overridden with the `PATHSNAP_DATA` env var. |
+| `io.py` | `list_trips(partition)`, `load_trip(trip_id, partition=None, with_route=False) -> Trip`, `load_route(trip_id)`. `Trip` holds `track[lon,lat,t]`, `nodes[lon,lat]` (index node_id), `arcs[u,v]` (index arc_id), `route`, `crs`. |
+| `geo.py` | `project_trip(trip)` adds `x,y` metres to track and nodes; `arc_table(trip)` gives per-arc `ax,ay,bx,by,length_m,bearing`; `point_to_segment(px,py,ax,ay,bx,by) -> (dist, frac, qx, qy)` (vectorised); `bearing_deg`, `angle_diff_deg`, `geodesic_m`. |
+| `scripts/verify_setup.py` | Run this first on your machine. It must print `Setup OK`. |
+
+**To be built:**
 
 | Module | Owner | Main function(s) |
 |--------|-------|------------------|
-| `io.py` | B | `list_trips(partition) -> list[str]`; `load_trip(trip_id, with_route=False) -> Trip` (dataclass: `track[lon,lat,t]`, `nodes[lon,lat]`, `arcs[u,v]`, `route: list[int] or None`) |
-| `geo.py` | A | `project(trip) -> Trip` adds `x,y` (metres) to track and nodes; `point_to_segment(...)` |
 | `graph.py` | D | `build_graph(trip) -> nx.DiGraph`; `network_distance(arc_a, pos_a, arc_b, pos_b, cutoff)` with caching |
 | `labels.py` | A | `align_route(trip) -> DataFrame[obs_idx, label_arc, label_dist_m, low_conf]` (route-constrained Viterbi) |
 | `candidates.py` | A | `generate_candidates(trip, radius_m, max_k) -> DataFrame[obs_idx, arc_id, dist_m, proj_frac, ...]` |
@@ -163,8 +185,8 @@ split isn't one model each: early on, everyone builds something that doesn't dep
 
 | | **A: Data & features** | **B: EDA, viz, report** | **C: Models & HPO** | **D: HMM & deployment** |
 |---|---|---|---|---|
-| **Phase 0** (first 30 min) | `geo.py`, agree on the `Trip` format with B | `io.py` loader (everyone depends on it, so push it fast); confirm the folder layout | `evaluate.py` harness tested on a fake table with the agreed schema | `graph.py` + `network_distance` |
-| **Phase 1** (→ first evaluation) | `labels.py` (route-constrained Viterbi), `candidates.py`, radius analysis, `features.py`, build the parquet tables | **EDA notebook** (all §4 checklist items), Folium maps, data-quality log. *This is what gets evaluated first.* | Plug in LogReg the moment the table lands; set up the results CSV and plots | `hmm.py` with distance-only emissions (no classifier needed yet); nearest-road baseline |
+| **Setup** (everyone, 10 min) | Clone, venv, `pip install -r requirements.txt`, `pip install -e .`, copy the data into `data/raw/`, run `python -m scripts.verify_setup` | ← same | ← same | ← same |
+| **Phase 1** (→ first evaluation) | `labels.py` (route-constrained Viterbi), `candidates.py`, radius analysis, `features.py`, build the parquet tables | **EDA notebook** (all checklist items), `viz.py` Folium maps, data-quality log. *This is what gets evaluated first.* | `evaluate.py` harness tested on a fake table with the agreed schema; plug in LogReg the moment the real table lands | `graph.py` + `network_distance`; `hmm.py` with distance-only emissions (no classifier needed yet); nearest-road baseline |
 | **Phase 2** | MLP (+ loss curves); help D with `pipeline.py` | GNB + KNN; model comparison plots | RF + LightGBM; pick the model with evidence | Swap in classifier emissions; tune λ, β, G; start API |
 | **Phase 3** | Feature ablations if time allows; review everyone's numbers | Ablation maps (classifier vs HMM); report skeleton filling up | Bayesian HPO, tuned vs untuned | API + UI, two-laptop test |
 | **Phase 4** | Report: data, labels, features | **Report owner**: assembles the PDF | Report: models, HPO | Report: HMM, API/UI screenshots |

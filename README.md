@@ -25,14 +25,34 @@ pipeline, and a separate UI lets an evaluator choose a trip and view the result.
 
 ## Setup
 
+Requires Python 3.10+ (developed on 3.11).
+
 ```bash
 python -m venv .venv
 # Windows: .venv\Scripts\activate   |   macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
+pip install -e .                      # makes `import pathsnap` work everywhere
 ```
 
-Put the raw dataset under `data/raw/`. The folder structure will be documented once
-the dataset has been explored.
+The dataset is not in the repository. Place it like this:
+
+```
+data/raw/
+├── train/<trip_id>/<trip_id>.{track,nodes,arcs,route}          (80 trips)
+├── student_test/<trip_id>/<trip_id>.{track,nodes,arcs,route}   (10 trips)
+└── evaluator_test/<trip_id>/...                                 (10 trips, API machine only)
+```
+
+To read the data from somewhere else, set the `PATHSNAP_DATA` environment variable to the folder
+that contains the partition folders.
+
+Then check everything works:
+
+```bash
+python -m scripts.verify_setup        # should end with "Setup OK"
+```
+
+See [docs/PLAN.md](docs/PLAN.md) for the approach, module contracts and team responsibilities.
 
 ## Data partitions
 
