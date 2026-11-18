@@ -1,0 +1,3 @@
+partition,trips,points,low_conf_pct,candidate_rows,mean_cands_per_point,positive_rate_pct,miss_rate_all_pct,miss_rate_confident_pct,seconds
+train,80,208417,11.16,1523093,7.31,12.1,11.57,0.46,13.0
+student_test,10,19160,0.14,170774,8.91,11.2,0.17,0.03,1.1

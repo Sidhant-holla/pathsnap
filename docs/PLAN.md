@@ -96,10 +96,24 @@ works from scripts, notebooks, the API and the UI. Run scripts from the repo roo
 
 \*The reference-route layer is only used for report maps of train/student-test trips. The UI never shows it.
 
-**The feature table** is the one dataset every model trains on, so preprocessing stays consistent:
-`data/processed/{train,student_test}_candidates.parquet`. It has one row per (trip_id, obs_idx, arc_id) with
-columns `trip_id, obs_idx, t, arc_id, label (0/1), label_low_conf, f_*`.
-Points whose true arc isn't among their candidates keep all-zero labels and count toward the **candidate miss rate**.
+**The feature tables** (built by `python -m scripts.build_features`, ~15 s, not committed, so rebuild locally)
+are the one dataset every model trains on, so preprocessing stays consistent:
+- `data/processed/{train,student_test}_candidates.parquet`: one row per (trip_id, obs_idx, arc_id) with
+  `trip_id, obs_idx, t, arc_id, label (0/1), label_low_conf, f_*` (the list is `features.FEATURE_COLUMNS`, 18 features).
+- `data/processed/{train,student_test}_points.parquet`: one row per GPS point, **including points with no
+  candidates**: `trip_id, obs_idx, t, label_arc, label_dist_m, low_conf, n_cands, true_in_cands`.
+  **Use this as the denominator** for Top-1 accuracy and candidate miss rate. A point whose true arc isn't
+  among its candidates counts as wrong.
+- `low_conf` = the point is more than 50 m from the reference route. 11% of train points, almost all from **parked cars**
+  (trips 33 and 54 sit in car parks for thousands of seconds). Train on `label_low_conf == False` rows, and report
+  metrics on confident points (main) and all points (secondary).
+
+| Built (A) | Result on training trips |
+|---|---|
+| `labels.align_route` | median 4.9 m from the labelled arc; differs from naive nearest-route-arc on up to 15% of points (trip 90) |
+| `candidates` (r = 50 m, max_k = 16) | miss rate 0.46% (confident), 7.3 candidates per point, 12% positives |
+| `features.trip_candidate_features(trip)` | route-free; the same function is used by `build_features` and the API |
+| Baselines (confident points) | nearest arc **55.9%** top-1 (71% of points have a two-way tie at the nearest distance), nearest + heading tie-break **82.6%** |
 
 **Every experiment** writes `experiments/results/<model_name>.json` (config, seed, all metrics, train/infer time)
 and appends one row to `experiments/results/summary.csv`. Models are saved to `models/<name>.joblib`.
