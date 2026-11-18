@@ -1,0 +1,10 @@
+
+=== lgbm_ranker (learning to rank) on 1,523,093 train rows, 18 features
+  fold 0: top1_conf=0.8692 top1_all=0.8513 logloss=0.0886 fit=6.6s
+  fold 1: top1_conf=0.9218 top1_all=0.9183 logloss=0.0578 fit=8.4s
+  fold 2: top1_conf=0.8714 top1_all=0.5738 logloss=0.1309 fit=6.3s
+  fold 3: top1_conf=0.8958 top1_all=0.7988 logloss=0.0513 fit=15.9s
+  fold 4: top1_conf=0.8496 top1_all=0.8251 logloss=0.0820 fit=7.5s
+  CV  top1_conf 0.8816 +/- 0.0279 | top1_all 0.7934 | obsF1 0.8376 | candF1 0.9197 | logloss 0.0821
+  ST  top1_conf 0.8957 | top1_all 0.8944 | obsF1 0.8524 | candF1 0.9430 | logloss 0.0545 | continuity 0.8022 | train 18.5s | infer 2.5 ms/1k rows
+exit=0
