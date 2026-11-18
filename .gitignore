@@ -30,3 +30,7 @@ Thumbs.db
 
 # Smoke-test outputs from --fake runs (never real results)
 **/_fake/
+
+# Evaluator data must never be committed, wherever it is placed
+evaluator_test/
+evaluator/
