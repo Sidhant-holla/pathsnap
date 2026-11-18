@@ -1,0 +1,141 @@
+{
+  "name": "gnb",
+  "timestamp": "2026-11-18T11:47:56",
+  "seed": 42,
+  "config": {
+    "model": "gnb",
+    "family": "probabilistic",
+    "seed": 42,
+    "var_smoothing": 1e-09,
+    "features": [
+      "f_dist",
+      "f_dist_rank",
+      "f_dist_gap",
+      "f_n_cands",
+      "f_proj_frac",
+      "f_arc_len",
+      "f_endpoint_dist",
+      "f_heading_diff",
+      "f_heading_gap",
+      "f_heading_reliable",
+      "f_speed",
+      "f_ctx_dist",
+      "f_ctx_gap",
+      "f_in_deg",
+      "f_out_deg",
+      "f_dt_prev",
+      "f_dt_next",
+      "f_jitter"
+    ],
+    "train_confident_only": true
+  },
+  "metrics": {
+    "cv": {
+      "top1_conf_mean": 0.8536808065768475,
+      "top1_conf_std": 0.026542796510606224,
+      "top1_all_mean": 0.7683713186643211,
+      "top1_all_std": 0.1267528254675881,
+      "top1_covered_mean": 0.8584536629055682,
+      "top1_covered_std": 0.027827364959730642,
+      "obs_macro_f1_conf_mean": 0.7405394083093431,
+      "obs_macro_f1_conf_std": 0.05435967889355906,
+      "obs_macro_f1_all_mean": 0.7360287395619503,
+      "obs_macro_f1_all_std": 0.057320008570486795,
+      "cand_macro_f1_mean": 0.8864968112368062,
+      "cand_macro_f1_std": 0.013596379460623656,
+      "cand_f1_mean": 0.8044061528788367,
+      "cand_f1_std": 0.021579818463311314,
+      "cand_precision_mean": 0.7296490882717233,
+      "cand_precision_std": 0.04053616171504191,
+      "cand_recall_mean": 0.8988417614411379,
+      "cand_recall_std": 0.03431161245918751,
+      "log_loss_mean": 0.39899896283377123,
+      "log_loss_std": 0.08555378832507518,
+      "log_loss_all_mean": 0.4258149569570529,
+      "log_loss_all_std": 0.05027412310011725,
+      "miss_rate_conf_mean": 0.005497937636543227,
+      "miss_rate_conf_std": 0.007932743346570846,
+      "miss_rate_all_mean": 0.10528352091512941,
+      "miss_rate_all_std": 0.1423168732400272,
+      "pooled": {
+        "n_trips": 80,
+        "n_rows": 1523093,
+        "n_points": 208417,
+        "n_points_conf": 185149,
+        "n_points_no_candidates": 18230,
+        "mean_candidates": 8.008396998743342,
+        "low_conf_rate": 0.11164156474759737,
+        "top1_conf": 0.857633581601845,
+        "top1_all": 0.7618860265717288,
+        "top1_covered": 0.8615703488277456,
+        "miss_rate_conf": 0.004569292839820882,
+        "miss_rate_all": 0.11570073458499064,
+        "obs_macro_f1_conf": 0.7493537596951398,
+        "obs_macro_f1_all": 0.7449339940018981,
+        "cand_accuracy": 0.9446507757924266,
+        "cand_precision": 0.7206583236296107,
+        "cand_recall": 0.903295117279697,
+        "cand_f1": 0.8017066605026558,
+        "cand_macro_f1": 0.8847715925160109,
+        "log_loss": 0.4064451857517494,
+        "confusion_matrix": [
+          [
+            1239064,
+            64531
+          ],
+          [
+            17823,
+            166480
+          ]
+        ],
+        "log_loss_all": 0.42806131194213864
+      },
+      "fit_time_s_total": 4.485377600023639,
+      "n_splits": 5,
+      "seed": 42,
+      "train_confident_only": true
+    },
+    "student_test": {
+      "n_trips": 10,
+      "n_rows": 170774,
+      "n_points": 19160,
+      "n_points_conf": 19133,
+      "n_points_no_candidates": 0,
+      "mean_candidates": 8.913048016701461,
+      "low_conf_rate": 0.0014091858037578288,
+      "top1_conf": 0.8610777191240265,
+      "top1_all": 0.8598643006263048,
+      "top1_covered": 0.8613028021748222,
+      "miss_rate_conf": 0.0002613285945748389,
+      "miss_rate_all": 0.001670146137787043,
+      "obs_macro_f1_conf": 0.7289639941066842,
+      "obs_macro_f1_all": 0.7289365180846017,
+      "cand_accuracy": 0.9554928125402721,
+      "cand_precision": 0.7480850331353817,
+      "cand_recall": 0.9088247595148473,
+      "cand_f1": 0.8206580748713591,
+      "cand_macro_f1": 0.8976259858945276,
+      "log_loss": 0.2932998485837283,
+      "confusion_matrix": [
+        [
+          145732,
+          5854
+        ],
+        [
+          1744,
+          17384
+        ]
+      ],
+      "log_loss_all": 0.29565103262047937,
+      "continuity": 0.7459066100667071,
+      "train_time_s": 0.7588229999964824,
+      "infer_time_s": 0.08127930000773631,
+      "n_fit_rows": 1487898,
+      "infer_ms_per_1k_rows": 0.4759465727085874,
+      "infer_ms_per_trip": 8.127930000773631
+    },
+    "train_time_s": 0.7588229999964824,
+    "infer_time_s": 0.08127930000773631,
+    "infer_ms_per_1k_rows": 0.4759465727085874
+  }
+}

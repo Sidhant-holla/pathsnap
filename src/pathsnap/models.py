@@ -43,6 +43,9 @@ ZOO = {
         "reg_lambda": 1.0, "n_estimators": 3000,
         "early_stopping_rounds": 100, "val_frac": 0.15, "eval_at": 1,
     }),
+    # Member B's models (defined in models_b.py)
+    "gnb": ("probabilistic", {"var_smoothing": 1e-9}),
+    "knn": ("instance-based", {"n_neighbors": 50, "weights": "distance", "point_step": 5, "n_jobs": -1}),
 }
 
 
@@ -65,6 +68,12 @@ def make(name: str, **overrides):
         return LGBMEarlyStop(params=params, seed=SEED)
     if name == "lgbm_ranker":
         return LGBMRankerProba(params=params, seed=SEED)
+    if name == "gnb":
+        from .models_b import make_gnb
+        return make_gnb(**params)
+    if name == "knn":
+        from .models_b import SubsampledKNN
+        return SubsampledKNN(**params)
     raise KeyError(name)
 
 

@@ -1,0 +1,18 @@
+
+=== gnb (probabilistic) on 1,523,093 train rows, 18 features
+  fold 0: top1_conf=0.8349 top1_all=0.8177 logloss=0.5058 fit=0.9s
+  fold 1: top1_conf=0.8964 top1_all=0.8930 logloss=0.4432 fit=0.9s
+  fold 2: top1_conf=0.8455 top1_all=0.5567 logloss=0.3859 fit=0.9s
+  fold 3: top1_conf=0.8608 top1_all=0.7676 logloss=0.2742 fit=0.9s
+  fold 4: top1_conf=0.8309 top1_all=0.8069 logloss=0.3858 fit=0.9s
+  CV  top1_conf 0.8537 +/- 0.0265 | top1_all 0.7684 | obsF1 0.7405 | candF1 0.8865 | logloss 0.3990
+  ST  top1_conf 0.8611 | top1_all 0.8599 | obsF1 0.7290 | candF1 0.8976 | logloss 0.2933 | continuity 0.7459 | train 0.8s | infer 0.5 ms/1k rows
+
+=== knn (instance-based) on 1,523,093 train rows, 18 features
+  fold 0: top1_conf=0.8565 top1_all=0.8389 logloss=0.1827 fit=0.2s
+  fold 1: top1_conf=0.9102 top1_all=0.9067 logloss=0.0960 fit=0.3s
+  fold 2: top1_conf=0.8522 top1_all=0.5611 logloss=0.1542 fit=0.2s
+  fold 3: top1_conf=0.8773 top1_all=0.7823 logloss=0.1054 fit=0.2s
+  fold 4: top1_conf=0.8381 top1_all=0.8139 logloss=0.1480 fit=0.2s
+  CV  top1_conf 0.8668 +/- 0.0280 | top1_all 0.7806 | obsF1 0.7986 | candF1 0.9201 | logloss 0.1373
+  ST  top1_conf 0.8721 | top1_all 0.8709 | obsF1 0.8015 | candF1 0.9228 | logloss 0.1078 | continuity 0.7884 | train 0.2s | infer 174.8 ms/1k rows
