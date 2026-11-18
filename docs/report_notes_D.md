@@ -119,8 +119,9 @@ Tests: `tests/test_hmm.py` (12 tests on a synthetic two-way network with a paral
    vs `ablation_student_test.csv`, from `python -m scripts.hmm_ablation ablation --defaults`).
    Likely reason (hypothesis, not proven): the train subset contains off-network trips (e.g. 54,
    33) where the classifier is unreliable, which pushes the train optimum to a low λ.
-   **Team decision pending:** keep the train-tuned values (strict: student-test stays a clean test)
-   or pick defaults using student-test (allowed by our plan, but then say so in the report).
+   **Team decision (PLAN §12):** keep the train-tuned values. The defaults' advantage comes almost
+   entirely from trip 77 (+4.3 points); across the 10 trips the defaults are better on 3 and worse on 4.
+   Switching would mean choosing on student-test noise, so student-test stays a clean test.
 2. **Stationary car at the end of the trip (trip 77, points 3785–3844).** The car is parked: GPS wanders
    ~200 m but net movement is 3–12 m. The HMM picks the southbound twin (jittery heading ~190–227°)
    while the label stays on the northbound last route arc, because the route-constrained labels can only move
