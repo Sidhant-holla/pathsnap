@@ -6,6 +6,7 @@ Run (from the repo root, after scripts.build_features):
     python -m scripts.hmm_ablation tune       # Optuna TPE for the decoder parameters on train
     python -m scripts.hmm_ablation ablation   # 4 methods on student_test, with the tuned params
     python -m scripts.hmm_ablation all        # the three steps above
+    python -m scripts.hmm_ablation ablation --defaults   # same table with untuned decoder defaults
 
 Why out-of-fold probabilities: the saved classifier was fitted on all 80 train trips, so
 its probabilities on those trips are over-confident. Tuning lam (how much to trust the
@@ -200,10 +201,12 @@ def tune(model_name: str, n_trials_dist: int, n_trials_clf: int) -> dict:
 
 # --------------------------------------------------------------------------- ablation
 
-def ablation(model_name: str) -> pd.DataFrame:
-    rec = json.loads(PARAMS_PATH.read_text()) if PARAMS_PATH.exists() else None
+def ablation(model_name: str, defaults: bool = False) -> pd.DataFrame:
+    """4-way table on student_test. defaults=True uses the untuned HMMParams defaults instead of
+    models/hmm_params.json and writes *_defaults files (for the tuned-vs-untuned comparison)."""
+    rec = json.loads(PARAMS_PATH.read_text()) if PARAMS_PATH.exists() and not defaults else None
     if rec is None:
-        print("no tuned params yet: using HMMParams defaults")
+        print("using untuned HMMParams defaults")
     p_clf = HMMParams.from_dict(rec["classifier_hmm"] if rec else None)
     p_dist = HMMParams.from_dict(rec["distance_hmm"] if rec else {"emission": "distance"})
 
@@ -226,9 +229,10 @@ def ablation(model_name: str) -> pd.DataFrame:
               f"({agg['decode_ms_per_point']:.3f} ms/pt)", flush=True)
     table = pd.DataFrame(rows)
     OUT.mkdir(parents=True, exist_ok=True)
-    table.to_csv(OUT / "ablation_student_test.csv", index=False)
-    pd.concat(per_trip, ignore_index=True).to_csv(OUT / "ablation_per_trip.csv", index=False)
-    log_result("hmm_ablation_student_test",
+    sfx = "_defaults" if defaults else ""
+    table.to_csv(OUT / f"ablation_student_test{sfx}.csv", index=False)
+    pd.concat(per_trip, ignore_index=True).to_csv(OUT / f"ablation_per_trip{sfx}.csv", index=False)
+    log_result(f"hmm_ablation_student_test{sfx}",
                {"family": "hmm", "model": model_name, "classifier_hmm": p_clf.to_dict(),
                 "distance_hmm": p_dist.to_dict(), "classifier_infer_s": clf_s},
                {m["method"]: m for m in rows}, results_dir=OUT)
@@ -241,13 +245,14 @@ def main():
     ap.add_argument("--model", default="lgbm", help="saved model name in models/ (default: lgbm)")
     ap.add_argument("--trials-dist", type=int, default=25)
     ap.add_argument("--trials-clf", type=int, default=40)
+    ap.add_argument("--defaults", action="store_true", help="ablation with untuned decoder defaults")
     a = ap.parse_args()
     if a.step in ("oof", "all"):
         make_oof(a.model)
     if a.step in ("tune", "all"):
         tune(a.model, a.trials_dist, a.trials_clf)
     if a.step in ("ablation", "all"):
-        ablation(a.model)
+        ablation(a.model, defaults=a.defaults)
 
 
 if __name__ == "__main__":
