@@ -115,6 +115,15 @@ are the one dataset every model trains on, so preprocessing stays consistent:
 | `features.trip_candidate_features(trip)` | route-free; the same function is used by `build_features` and the API |
 | Baselines (confident points) | nearest arc **55.9%** top-1 (71% of points have a two-way tie at the nearest distance), nearest + heading tie-break **82.6%** |
 
+**Decision: labels are frozen at version 1 (`heading_weight_m = 0`).** Tests showed that on the
+segment where a car U-turns on a two-way street, both directions are at the same distance, so the
+alignment can pick the wrong direction there. An optional heading term fixes it
+(`align_route(..., heading_weight_m=10)`). On the 90 dev trips it would change 0.95% of labels
+(73% direction flips), and where the car is clearly moving an independent ±5 s heading agrees with
+the new label 874 times vs 151. We did **not** switch it on: under 1% of labels cannot change the model
+ranking, and switching would mean rebuilding the tables and rerunning every experiment. It goes in the
+report as a quantified limitation of the reference labels (brief §6) and as a future improvement.
+
 **Every experiment** writes `experiments/results/<model_name>.json` (config, seed, all metrics, train/infer time)
 and appends one row to `experiments/results/summary.csv`. Models are saved to `models/<name>.joblib`.
 
