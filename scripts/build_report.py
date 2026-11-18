@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from reportlab.lib import colors  # noqa: E402
-from reportlab.lib.enums import TA_CENTER  # noqa: E402
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT  # noqa: E402
 from reportlab.lib.pagesizes import A4  # noqa: E402
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet  # noqa: E402
 from reportlab.lib.units import mm  # noqa: E402
@@ -143,19 +143,24 @@ importance_chart(GEN / "feature_importance.png")
 hmm_trip_chart(GEN / "hmm_per_trip.png")
 
 # ============================================================================ layout helpers
+# Plain document look: Times New Roman, black text, simple tables.
 ss = getSampleStyleSheet()
-TITLE = ParagraphStyle("TITLE", parent=ss["Title"], fontSize=22, leading=27, spaceAfter=6)
-H1 = ParagraphStyle("H1", parent=ss["Heading1"], fontSize=15, leading=19, spaceBefore=10, spaceAfter=6,
-                    textColor=colors.HexColor("#1f3b63"))
-H2 = ParagraphStyle("H2", parent=ss["Heading2"], fontSize=12, leading=15, spaceBefore=8, spaceAfter=4,
-                    textColor=colors.HexColor("#1f3b63"))
-H3 = ParagraphStyle("H3", parent=ss["Heading3"], fontSize=10.5, leading=13, spaceBefore=6, spaceAfter=2)
-B = ParagraphStyle("B", parent=ss["BodyText"], fontSize=9.6, leading=13.2, spaceAfter=4)
-BUL = ParagraphStyle("BUL", parent=B, leftIndent=12, bulletIndent=2, spaceAfter=2)
-CAP = ParagraphStyle("CAP", parent=B, fontSize=8.2, leading=10.5, alignment=TA_CENTER,
-                     textColor=colors.HexColor("#555555"), spaceAfter=8)
-CELL = ParagraphStyle("CELL", parent=B, fontSize=7.8, leading=9.6, spaceAfter=0)
-CELLB = ParagraphStyle("CELLB", parent=CELL, fontName="Helvetica-Bold", textColor=colors.white)
+BLACK = colors.black
+TITLE = ParagraphStyle("TITLE", parent=ss["Title"], fontName="Times-Bold", fontSize=24, leading=29, spaceAfter=6,
+                       textColor=BLACK)
+H1 = ParagraphStyle("H1", parent=ss["Heading1"], fontName="Times-Bold", fontSize=15, leading=19, spaceBefore=12,
+                    spaceAfter=6, textColor=BLACK)
+H2 = ParagraphStyle("H2", parent=ss["Heading2"], fontName="Times-Bold", fontSize=12.5, leading=16, spaceBefore=9,
+                    spaceAfter=4, textColor=BLACK)
+H3 = ParagraphStyle("H3", parent=ss["Heading3"], fontName="Times-BoldItalic", fontSize=11.5, leading=14,
+                    spaceBefore=7, spaceAfter=2, textColor=BLACK)
+B = ParagraphStyle("B", parent=ss["BodyText"], fontName="Times-Roman", fontSize=11, leading=14.5, spaceAfter=5,
+                   alignment=TA_JUSTIFY, textColor=BLACK)
+BUL = ParagraphStyle("BUL", parent=B, leftIndent=14, bulletIndent=3, spaceAfter=3)
+CAP = ParagraphStyle("CAP", parent=B, fontName="Times-Italic", fontSize=9.5, leading=12, alignment=TA_CENTER,
+                     spaceAfter=9)
+CELL = ParagraphStyle("CELL", parent=B, fontSize=8.8, leading=10.6, spaceAfter=0, alignment=TA_LEFT)
+CELLB = ParagraphStyle("CELLB", parent=CELL, fontName="Times-Bold")
 story = []
 fig_no = [0]
 tab_no = [0]
@@ -205,25 +210,23 @@ def fig(path, width_mm, caption, label=None):
     if label:
         FIG_LABELS[label] = fig_no[0]
     story.append(KeepTogether([Image(str(path), width=w, height=h),
-                               Paragraph(f"<b>Figure {fig_no[0]}.</b> {caption}", CAP)]))
+                               Paragraph(f"Figure {fig_no[0]}: {caption}", CAP)]))
 
 
 def table(rows, widths, caption=None, highlight=None):
-    data = [[Paragraph(str(c), CELLB if r == 0 else CELL) for c in row] for r, row in enumerate(rows)]
+    """Plain table: thin black grid lines, bold header row, no shading. `highlight` rows are set in bold."""
+    bold_rows = set(highlight or [])
+    data = [[Paragraph(str(c), CELLB if (r == 0 or r in bold_rows) else CELL) for c in row]
+            for r, row in enumerate(rows)]
     t = Table(data, colWidths=[w * mm for w in widths], repeatRows=1)
-    style = [("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1f3b63")),
-             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-             ("GRID", (0, 0), (-1, -1), 0.3, colors.HexColor("#b0b0b0")),
-             ("TOPPADDING", (0, 0), (-1, -1), 2.2), ("BOTTOMPADDING", (0, 0), (-1, -1), 2.2)]
-    for r in range(2, len(rows), 2):
-        style.append(("BACKGROUND", (0, r), (-1, r), colors.HexColor("#f2f5f9")))
-    for r in (highlight or []):
-        style.append(("BACKGROUND", (0, r), (-1, r), colors.HexColor("#fff3d6")))
+    style = [("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+             ("GRID", (0, 0), (-1, -1), 0.5, BLACK),
+             ("TOPPADDING", (0, 0), (-1, -1), 2.5), ("BOTTOMPADDING", (0, 0), (-1, -1), 2.5)]
     t.setStyle(TableStyle(style))
     items = []
     if caption:
         tab_no[0] += 1
-        items.append(Paragraph(f"<b>Table {tab_no[0]}.</b> {caption}", CAP))
+        items.append(Paragraph(f"Table {tab_no[0]}: {caption}", CAP))
     items.append(t)
     story.append(KeepTogether(items))
     story.append(Spacer(1, 6))
@@ -421,7 +424,7 @@ def build_story():
       "connected, before any HMM). For reference, always picking the nearest road gives 55.9% Top-1, and picking the "
       "nearest road with the better heading gives 82.6%.")
 
-    story.append(CondPageBreak(130 * mm))
+    story.append(CondPageBreak(200 * mm))
     h2("3.1 Overall model comparison")
     order = ["LightGBM", "LightGBM (tuned)", "LightGBM Ranker", "Random Forest", "MLP", "KNN (distance-weighted)",
              "Logistic Regression", "Gaussian Naive Bayes"]
@@ -434,7 +437,7 @@ def build_story():
                      f3(r["st_top1"]), f3(r["st_log_loss"]), f"{r['inference_ms_per_1k_rows']:.1f}"])
     table(rows, [22, 22, 28, 13, 19, 14, 14, 14, 13, 14],
           "All models (same 18 features and folds). ST = student-test. Macro F1 is candidate level. *Route continuity of the "
-          "classifier-only route on student-test (before the HMM). Highlighted row = deployed model.", highlight=[1])
+          "classifier-only route on student-test (before the HMM). The row in bold is the deployed model.", highlight=[1])
     p("LightGBM is the best untuned classifier on every accuracy measure. Its tuned version and the ranker are only a few "
       "tenths of a point different (Sections 3.2 and 4). Inference time is measured per 1,000 candidate rows; a typical "
       "trip has about 17,000.")
@@ -783,8 +786,7 @@ def build_story():
                                 "<font face='Courier'>reports/figures/deployment/</font> with \"console\" in the file name "
                                 "and run <font face='Courier'>python -m scripts.build_report</font> again.", B)]],
                     colWidths=[170 * mm])
-        box.setStyle(TableStyle([("BOX", (0, 0), (-1, -1), 1, colors.HexColor("#d7301f")),
-                                 ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#fff3f0")),
+        box.setStyle(TableStyle([("BOX", (0, 0), (-1, -1), 0.5, colors.black),
                                  ("TOPPADDING", (0, 0), (-1, -1), 8), ("BOTTOMPADDING", (0, 0), (-1, -1), 8)]))
         story += [box, Spacer(1, 6)]
 
@@ -817,10 +819,9 @@ def build_story():
 # ============================================================================ build
 def footer(canvas, doc):
     canvas.saveState()
-    canvas.setFont("Helvetica", 7.5)
-    canvas.setFillColor(colors.HexColor("#777777"))
-    canvas.drawString(18 * mm, 10 * mm, "PathSnap: technical report")
-    canvas.drawRightString(A4[0] - 18 * mm, 10 * mm, f"page {doc.page}")
+    canvas.setFont("Times-Roman", 10)
+    canvas.setFillColor(colors.black)
+    canvas.drawCentredString(A4[0] / 2, 11 * mm, str(doc.page))
     canvas.restoreState()
 
 
