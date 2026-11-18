@@ -746,15 +746,33 @@ def build_story():
     fig(FIGURES_DIR / "ui" / "ui_02_trip_00000076_map.png", 165, "The same screen scrolled to the map: GPS points and the predicted route.")
     shots = sorted([p_ for p_ in DEPLOY_SHOTS.glob("*") if p_.suffix.lower() in (".png", ".jpg", ".jpeg")]) \
         if DEPLOY_SHOTS.exists() else []
+
+    def shot_caption(path):
+        import re
+        stem = path.stem.lower()
+        trip = re.search(r"(\d{8})", stem)
+        trip = trip.group(1) if trip else ""
+        if "console" in stem or "cmd" in stem:
+            return "Two-laptop run, Laptop 1 console: the API's log lines for the incoming requests (trip, status, time per stage)."
+        if "health" in stem:
+            return "Two-laptop run: Laptop 2's browser opens /health on Laptop 1's API, so the connection works."
+        if "map" in stem:
+            return f"Two-laptop run, Laptop 2 UI, trip {trip}: GPS points and the predicted route on the map."
+        if "metrics" in stem or "ui" in stem:
+            return f"Two-laptop run, Laptop 2 UI after predicting trip {trip}: the metrics returned by Laptop 1's API."
+        return "Two-laptop run: " + path.stem.replace("_", " ") + "."
+
     if shots:
-        for s in shots:
-            fig(s, 160, s.stem.replace("_", " ").replace("-", " ").capitalize() + ".")
-    else:
-        box = Table([[Paragraph("<b>Screenshots from the two-laptop demo go here</b> (Laptop 1 console showing the "
-                                "<font face='Courier'>POST /predict</font> log lines, the UI on Laptop 2, and "
-                                "<font face='Courier'>/health</font> opened from Laptop 2). Put them in "
-                                "<font face='Courier'>reports/figures/deployment/</font> and run "
-                                "<font face='Courier'>python -m scripts.build_report</font> again.", B)]],
+        p("The screenshots below are from the real two-laptop setup on the same hotspot: the UI on Laptop 2 sends each "
+          "request to the API on Laptop 1 (address 10.171.60.10:8000).")
+    for s in shots:
+        fig(s, 150 if "health" not in s.stem else 120, shot_caption(s))
+    if not any("console" in s.stem.lower() or "cmd" in s.stem.lower() for s in shots):
+        box = Table([[Paragraph("<b>Screenshot still to add: the Laptop 1 console</b> showing the "
+                                "<font face='Courier'>POST /predict</font> log lines (the brief asks for API responses "
+                                "\"on the CMD of the receiving laptop\"). Save it in "
+                                "<font face='Courier'>reports/figures/deployment/</font> with \"console\" in the file name "
+                                "and run <font face='Courier'>python -m scripts.build_report</font> again.", B)]],
                     colWidths=[170 * mm])
         box.setStyle(TableStyle([("BOX", (0, 0), (-1, -1), 1, colors.HexColor("#d7301f")),
                                  ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#fff3f0")),
