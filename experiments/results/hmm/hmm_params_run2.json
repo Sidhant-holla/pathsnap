@@ -1,0 +1,65 @@
+{
+  "model": "lgbm",
+  "classifier_hmm": {
+    "emission": "classifier",
+    "lam": 0.3247988474253323,
+    "sigma": 13.159697324820245,
+    "beta": 9.815782602007282,
+    "gap_s": 222.0941598108489,
+    "v_max": 50.0,
+    "speed_slack_m": 30.0,
+    "break_penalty": 50.0,
+    "backward_tol_m": 15.0
+  },
+  "distance_hmm": {
+    "emission": "distance",
+    "lam": 1.0,
+    "sigma": 13.159697324820245,
+    "beta": 43.35512725741224,
+    "gap_s": 5.987076164242491,
+    "v_max": 50.0,
+    "speed_slack_m": 30.0,
+    "break_penalty": 50.0,
+    "backward_tol_m": 15.0
+  },
+  "tuned_on": {
+    "partition": "train",
+    "trips": [
+      "00000006",
+      "00000008",
+      "00000012",
+      "00000018",
+      "00000019",
+      "00000033",
+      "00000035",
+      "00000042",
+      "00000043",
+      "00000045",
+      "00000046",
+      "00000054",
+      "00000062",
+      "00000066",
+      "00000070",
+      "00000075",
+      "00000079",
+      "00000080",
+      "00000083",
+      "00000086",
+      "00000088",
+      "00000093",
+      "00000096",
+      "00000099"
+    ],
+    "probabilities": "5-fold GroupKFold OOF",
+    "objective": "pooled top1_conf of the decoded path",
+    "trials": {
+      "distance": 25,
+      "classifier": 40
+    }
+  },
+  "best_train_top1_conf": {
+    "distance": 0.9074436284459534,
+    "classifier": 0.9172971177621139
+  },
+  "tuning_seconds": 1227.0
+}

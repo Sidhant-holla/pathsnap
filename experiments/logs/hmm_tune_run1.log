@@ -1,0 +1,15 @@
+group CV for OOF probabilities: lgbm {'learning_rate': 0.05, 'num_leaves': 63, 'min_child_samples': 50, 'subsample': 0.8, 'subsample_freq': 1, 'colsample_bytree': 0.8, 'reg_lambda': 1.0, 'reg_alpha': 0.0, 'n_estimators': 3000, 'early_stopping_rounds': 100, 'val_frac': 0.15}
+  fold 0: top1_conf=0.8692 top1_all=0.8513 logloss=0.0902 fit=12.0s
+  fold 1: top1_conf=0.9209 top1_all=0.9173 logloss=0.0575 fit=12.8s
+  fold 2: top1_conf=0.8725 top1_all=0.5745 logloss=0.0782 fit=13.6s
+  fold 3: top1_conf=0.8957 top1_all=0.7987 logloss=0.0562 fit=19.4s
+  fold 4: top1_conf=0.8474 top1_all=0.8230 logloss=0.0843 fit=21.3s
+saved <repo>\data\processed\train_oof_lgbm.parquet  (pooled OOF top1_conf=0.8849)
+tuning on 24 train trips: ['00000006', '00000008', '00000012', '00000018', '00000019', '00000033', '00000035', '00000042', '00000043', '00000045', '00000046', '00000054', '00000062', '00000066', '00000070', '00000075', '00000079', '00000080', '00000083', '00000086', '00000088', '00000093', '00000096', '00000099']
+distance: best top1_conf=0.9094 params={'sigma': 14.838913474903691, 'beta': 48.819662260591386, 'gap_s': 60.20611638893194}
+classifier: best top1_conf=0.9174 params={'lam': 0.2760366540888674, 'beta': 13.201315120221752, 'gap_s': 175.29137259727162}
+saved <repo>\models\hmm_params.json
+nearest   top1_conf=0.5403 continuity=0.2888 route_f1=0.5907 raw_route_f1=0.5579 (0.005 ms/pt)
+dist_hmm  top1_conf=0.9058 continuity=0.9020 route_f1=0.9531 raw_route_f1=0.9152 (0.211 ms/pt)
+clf       top1_conf=0.8964 continuity=0.8085 route_f1=0.8394 raw_route_f1=0.9009 (0.004 ms/pt)
+clf_hmm   top1_conf=0.9279 continuity=0.9042 route_f1=0.9743 raw_route_f1=0.9298 (0.162 ms/pt)

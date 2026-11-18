@@ -85,12 +85,12 @@ works from scripts, notebooks, the API and the UI. Run scripts from the repo roo
 
 | Module | Owner | Main function(s) |
 |--------|-------|------------------|
-| `graph.py` | D | `build_graph(trip) -> nx.DiGraph`; `network_distance(arc_a, pos_a, arc_b, pos_b, cutoff)` with caching |
+| `graph.py` | D | `build_graph(trip) -> nx.DiGraph`; `network_distance(G, arc_a, pos_a, arc_b, pos_b, cutoff)` with caching (the graph and its cache are per trip, so `G` is passed in) |
 | `labels.py` | A | `align_route(trip) -> DataFrame[obs_idx, label_arc, label_dist_m, low_conf]` (route-constrained Viterbi) |
 | `candidates.py` | A | `generate_candidates(trip, radius_m, max_k) -> DataFrame[obs_idx, arc_id, dist_m, proj_frac, ...]` |
 | `features.py` | A | `build_features(trip, cands) -> DataFrame`; constant `FEATURE_COLUMNS` (all start with `f_`) |
 | `evaluate.py` | C | `group_cv(make_model, df, n_splits=5, seed=42)`; `score(df) -> dict`; `log_result(name, config, metrics)` |
-| `hmm.py` | D | `viterbi(cands_with_proba, graph, params) -> DataFrame[obs_idx, arc_id]` |
+| `hmm.py` | D | `viterbi(cands_with_proba, graph, params, points) -> DataFrame[obs_idx, arc_id, ...]`; `points` = the projected track (x, y, t), needed for d_straight, Δt and for points with no candidates |
 | `pipeline.py` | D+A | `predict_trip(trip_id, model, params) -> dict`. **Never loads the route.** |
 | `viz.py` | B | `trip_map(trip, layers={...}) -> folium.Map` (GPS, network, reference*, predicted) |
 
