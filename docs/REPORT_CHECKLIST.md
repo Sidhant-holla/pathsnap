@@ -65,6 +65,5 @@ D = `docs/report_notes_D.md`. Data quality: `docs/data_quality.md`. Final decisi
 - [x] One sentence on the leakage design: the prediction never reads the route; only the server-side scorer does
 
 ## Also required
-- [ ] Include the disclosures required by the event's policy (Deliverables §8, rule 5)
 - [x] One consolidated PDF; every number verifiable in the repo
 - [ ] Repository made public at submission
