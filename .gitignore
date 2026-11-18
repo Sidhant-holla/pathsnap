@@ -1,0 +1,28 @@
+# Local-only reference notes (hackathon brief)
+_reference/
+
+# Raw dataset (distributed separately; see README)
+data/raw/*
+!data/raw/.gitkeep
+data/interim/
+data/processed/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Env / secrets
+.env
+*.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
