@@ -3,9 +3,10 @@
 Run (API already running, from either laptop):
     python -m scripts.smoke_api --url http://<laptop-1-ip>:8000
 
-It prints only the status code, timing and response size per trip, deliberately NOT the
-metrics: on the evaluator trips we may check that nothing crashes, but we must not read
-or tune on their scores (PLAN section 9).
+It sends {"score": false}, so the API skips scoring entirely: no metrics are computed,
+returned or written to the API log, and the reference route is not even read. On the
+evaluator trips we may check that nothing crashes, but we must not see or tune on their
+scores (PLAN section 9). It prints only the status code, timing and response size per trip.
 """
 import argparse
 import sys
@@ -28,11 +29,11 @@ def main():
     for tid in ids:
         t0 = time.perf_counter()
         try:
-            r = requests.post(f"{url}/predict", json={"trip_id": tid}, timeout=a.timeout)
+            r = requests.post(f"{url}/predict", json={"trip_id": tid, "score": False}, timeout=a.timeout)
             ok = r.status_code == 200
             body = r.json() if ok else {}
             extra = (f"points={body['n_points']} route_pieces={len(body['route_coords'])} "
-                     f"metrics_available={body['metrics'].get('available')}") if ok else r.text[:200]
+                     f"scored={body['metrics'].get('available')}") if ok else r.text[:200]
             status = r.status_code
         except Exception as e:                     # connection error, timeout, bad JSON
             ok, status, extra = False, type(e).__name__, str(e)[:200]

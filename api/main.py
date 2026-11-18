@@ -14,6 +14,8 @@ Endpoints:
     GET  /health          status, model, partition, number of trips
     GET  /trips           the trip IDs of the served partition (the 10 evaluator trips)
     POST /predict         {"trip_id": "..."} -> GPS points, predicted route geometry, metrics
+                          {"trip_id": "...", "score": false} skips scoring entirely: no metrics are
+                          computed or logged (used by scripts.smoke_api for crash-only checks)
 
 POST /predict first runs pathsnap.pipeline.predict_trip, which never reads the
 reference route. Only afterwards does api.scorer load the route and compute metrics.
@@ -95,6 +97,7 @@ async def log_requests(request: Request, call_next):
 
 class PredictRequest(BaseModel):
     trip_id: str
+    score: bool = True      # False = crash-only check: the reference route is not even read
 
 
 @app.get("/")
@@ -127,18 +130,23 @@ def predict(req: PredictRequest, request: Request):
         raise HTTPException(status_code=500, detail=f"prediction failed: {type(e).__name__}: {e}")
 
     t0 = time.perf_counter()
-    try:
-        metrics = score_prediction(trip_id, PARTITION, pred, ctx["graph"])
-    except Exception as e:
-        log.info(f"scoring failed for trip {trip_id}:\n{traceback.format_exc()}")
-        metrics = {"available": False, "reason": f"scoring failed: {type(e).__name__}: {e}"}
+    if not req.score:
+        metrics = {"available": False, "reason": "scoring skipped on request (crash-only check)"}
+    else:
+        try:
+            metrics = score_prediction(trip_id, PARTITION, pred, ctx["graph"])
+        except Exception as e:
+            log.info(f"scoring failed for trip {trip_id}:\n{traceback.format_exc()}")
+            metrics = {"available": False, "reason": f"scoring failed: {type(e).__name__}: {e}"}
     score_s = time.perf_counter() - t0
+    scored = (f"top1={metrics.get('top1_all', 'n/a')} route_f1={metrics.get('route_f1', 'n/a')}"
+              if req.score else "scoring skipped (crash-only check)")
 
     t = pred["timing_s"]
     log.info(f"  trip={trip_id} points={pred['n_points']} candidates={pred['flags']['n_candidates']} | "
              f"load {t['load']:.2f}s features {t['features']:.2f}s classify {t['classify']:.2f}s "
              f"graph {t['graph']:.2f}s decode {t['decode']:.2f}s route {t['route']:.2f}s score {score_s:.2f}s | "
-             f"top1={metrics.get('top1_all', 'n/a')} route_f1={metrics.get('route_f1', 'n/a')}")
+             f"{scored}")
 
     return {
         "trip_id": trip_id,
