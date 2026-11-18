@@ -1,6 +1,9 @@
 logreg       train top1 0.8662 | CV 0.8608 | ST 0.8600 | log loss train 0.1590 CV 0.1604 | 2s
-rf           train top1 0.8982 | CV 0.8777 | ST 0.8903 | log loss train 0.0634 CV 0.0750 | 3s
-lgbm         train top1 0.9223 | CV 0.8811 | ST 0.8964 | log loss train 0.0514 CV 0.0733 | 4s
-mlp          train top1 0.8951 | CV 0.8758 | ST 0.8930 | log loss train 0.0659 CV 0.0771 | 2s
+rf           train top1 0.8982 | CV 0.8777 | ST 0.8903 | log loss train 0.0634 CV 0.0750 | 5s
+lgbm         train top1 0.9223 | CV 0.8811 | ST 0.8964 | log loss train 0.0514 CV 0.0733 | 6s
+mlp          train top1 0.8951 | CV 0.8758 | ST 0.8930 | log loss train 0.0659 CV 0.0771 | 3s
 gnb          train top1 0.8591 | CV 0.8537 | ST 0.8611 | log loss train 0.3891 CV 0.3990 | 2s
-knn          train top1 0.9069 | CV 0.8668 | ST 0.8721 | log loss train 0.0782 CV 0.1373 | 229s
+knn          train top1 0.9069 | CV 0.8668 | ST 0.8721 | log loss train 0.0782 CV 0.1373 | 318s
+lgbm_tuned   train top1 0.9286 | CV 0.8822 | ST 0.8997 | log loss train 0.0485 CV 0.0737 | 31s
+lgbm_ranker  train top1 0.9368 | CV 0.8816 | ST 0.8957 | log loss train 0.0473 CV 0.0821 | 4s
+wrote C:\Users\prana\Documents\PES\YEAR 3\ML\Hackathon\C\pathsnap\reports\figures\comparison\overfitting_check.png

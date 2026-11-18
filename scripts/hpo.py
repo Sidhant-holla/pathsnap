@@ -97,15 +97,23 @@ def objective_factory(model_name, train, points, n_splits, seed):
     return objective
 
 
+def _set_title(ax, text):
+    # Optuna writes its own title (left-aligned on some plots); clear every slot first so
+    # the titles don't overprint.
+    for loc in ("left", "center", "right"):
+        ax.set_title("", loc=loc)
+    ax.set_title(text, loc="left")
+
+
 def save_plots(study, fig_dir, tag):
     from optuna.visualization.matplotlib import plot_optimization_history, plot_param_importances
     ax = plot_optimization_history(study)
-    ax.set_title(f"{tag}: optimisation history (objective = mean CV top-1)")
+    _set_title(ax, f"{tag}: optimisation history (objective = mean CV top-1, confident points)")
     ax.figure.set_size_inches(7, 4); ax.figure.tight_layout()
     ax.figure.savefig(fig_dir / "hpo_history.png", dpi=150); plt.close(ax.figure)
     if len([t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE]) >= 3:
         ax = plot_param_importances(study)
-        ax.set_title(f"{tag}: hyperparameter importance (fANOVA)")
+        _set_title(ax, f"{tag}: hyperparameter importance (fANOVA)")
         ax.figure.set_size_inches(7, 4); ax.figure.tight_layout()
         ax.figure.savefig(fig_dir / "hpo_param_importance.png", dpi=150); plt.close(ax.figure)
 
