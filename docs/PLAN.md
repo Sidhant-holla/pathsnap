@@ -104,8 +104,8 @@ are the one dataset every model trains on, so preprocessing stays consistent:
   candidates**: `trip_id, obs_idx, t, label_arc, label_dist_m, low_conf, n_cands, true_in_cands`.
   **Use this as the denominator** for Top-1 accuracy and candidate miss rate. A point whose true arc isn't
   among its candidates counts as wrong.
-- `low_conf` = the point is more than 50 m from the reference route. 11% of train points, almost all from **parked cars**
-  (trips 33 and 54 sit in car parks for thousands of seconds). Train on `label_low_conf == False` rows, and report
+- `low_conf` = the point is more than 50 m from the reference route. 11% of train points, almost all from **off-network episodes**
+  (trip 54 spends 4.3 h inside a ~1 km² area with no mapped road; trip 33 is similar). Train on `label_low_conf == False` rows, and report
   metrics on confident points (main) and all points (secondary).
 
 | Built (A) | Result on training trips |
