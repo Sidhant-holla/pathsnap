@@ -248,7 +248,7 @@ def build_story():
               Paragraph("Map-Matching and Route Reconstruction from Noisy GPS", ParagraphStyle(
                   "sub", parent=B, fontSize=14, leading=18, alignment=TA_CENTER)),
               Spacer(1, 6 * mm),
-              Paragraph("Technical Report — UE24CS352A Machine Learning Hackathon, PES University (RR Campus)",
+              Paragraph("Technical Report: UE24CS352A Machine Learning Hackathon, PES University (RR Campus)",
                         ParagraphStyle("sub2", parent=B, alignment=TA_CENTER, fontSize=10.5)),
               Spacer(1, 14 * mm)]
     team = [["Member", "Name", "Main responsibility"],
@@ -515,7 +515,7 @@ def build_story():
         "neighbour. CV and student-test agree, so it generalises consistently.")
     model_section(
         "Random Forest (bagging ensemble)", "rf",
-        "a robust non-linear model that captures feature interactions (such as distance × heading) without scaling and "
+        "a dependable non-linear model that captures feature interactions (such as distance × heading) without scaling and "
         "is not easily thrown off by noisy labels.",
         "second-best untuned classifier (CV 0.878, student-test 0.890), well-calibrated probabilities (log loss 0.063). "
         "It ranks the same features highest as LightGBM: heading difference, heading gap and distance gap.",
