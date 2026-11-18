@@ -5,10 +5,12 @@ Run after scripts.hmm_ablation (uses the tuned models/hmm_params.json):
 
 On every student_test trip we decode with the classifier alone and with classifier + HMM,
 mark each GPS point correct/incorrect against its label, and slide a 60-point window
-along the trip. Only windows where the car actually moves (>= MIN_MOVE_M along the GPS
-track) are considered, and a fix only counts when the classifier picked a DIFFERENT road,
-not just the opposite-direction twin of the right one (twins overlap on a map, so such a
-fix would be invisible). The windows with the largest gain become "fix" maps, and the
+along the trip. Only windows where the car actually moves are considered: the straight-line
+distance between the window's first and last GPS point must be >= MIN_MOVE_M (summed step
+lengths are not used, because GPS jitter on a parked car adds up to hundreds of metres).
+A fix or a loss only counts when the wrong arc is a DIFFERENT road, not the
+opposite-direction twin of the right one (twins overlap on a map, so the difference would
+be invisible, and on a near-stationary car the label's direction is itself uncertain). The windows with the largest gain become "fix" maps, and the
 window with the largest loss (classifier right, HMM wrong) the "did not help" map.
 
 Each map shows GPS points, nearby road network, the reference route (green; allowed here
@@ -87,9 +89,11 @@ def main():
         u, v = it["G"].graph["u"], it["G"].graph["v"]
         twin = (u[clf] == v[lab]) & (v[clf] == u[lab])
         visible_fix = ok_h & ~ok_c & ~twin
-        loss = ok_c & ~ok_h
+        twin_h = (u[hmm] == v[lab]) & (v[hmm] == u[lab])
+        loss = ok_c & ~ok_h & ~twin_h
         x, y = it["trip"].track["x"].to_numpy(), it["trip"].track["y"].to_numpy()
-        moved = windows(np.r_[0.0, np.hypot(np.diff(x), np.diff(y))][1:].tolist() + [0.0], WINDOW)
+        n_w = len(x) - WINDOW + 1
+        moved = np.hypot(x[WINDOW - 1:] - x[:n_w], y[WINDOW - 1:] - y[:n_w])
         gain = windows(visible_fix.astype(int) - loss.astype(int), WINDOW).astype(float)
         gain[moved < MIN_MOVE_M] = np.nan
         if np.isnan(gain).all():
