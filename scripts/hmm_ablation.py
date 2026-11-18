@@ -172,13 +172,13 @@ def tune(model_name: str, n_trials_dist: int, n_trials_clf: int) -> dict:
     t0 = time.time()
     s_dist = run("distance", lambda tr: {
         "sigma": tr.suggest_float("sigma", 2.0, 40.0, log=True),
-        "beta": tr.suggest_float("beta", 0.5, 50.0, log=True),
-        "gap_s": tr.suggest_float("gap_s", 5.0, 180.0, log=True),
+        "beta": tr.suggest_float("beta", 0.5, 200.0, log=True),
+        "gap_s": tr.suggest_float("gap_s", 5.0, 600.0, log=True),
     }, n_trials_dist)
     s_clf = run("classifier", lambda tr: {
-        "lam": tr.suggest_float("lam", 0.1, 10.0, log=True),
-        "beta": tr.suggest_float("beta", 0.5, 50.0, log=True),
-        "gap_s": tr.suggest_float("gap_s", 5.0, 180.0, log=True),
+        "lam": tr.suggest_float("lam", 0.05, 10.0, log=True),
+        "beta": tr.suggest_float("beta", 0.5, 200.0, log=True),
+        "gap_s": tr.suggest_float("gap_s", 5.0, 600.0, log=True),
     }, n_trials_clf)
 
     best = HMMParams(emission="classifier", **s_clf.best_params).to_dict()

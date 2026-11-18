@@ -1,0 +1,5 @@
+trip_id,kind,start,gain_points,clf_correct,hmm_correct
+00000076,fix,1394,30,30,60
+00000056,fix,137,23,30,53
+00000077,fix,2121,19,18,41
+00000077,nohelp,3785,-47,47,0
