@@ -224,3 +224,14 @@ selection, and before the demo. At each one, every owner explains their part to 
 - Never commit `data/raw/` or anything secret. Do commit result JSON/CSVs, plots, maps and the final model.
 - Fixed seed `42` everywhere.
 - You must understand every line you push.
+
+## 12. Final decisions (deployed configuration)
+
+| Decision | Choice | Evidence |
+|---|---|---|
+| Classifier served by the API | **untuned LightGBM** (`models/lgbm.joblib`, `PATHSNAP_MODEL=lgbm`) | Bayesian HPO (51 trials) gave +0.1 pts CV top-1 (fold std ±2.9) and +0.3 pts student-test, better in only 3 of 5 folds, at 10x the inference cost; the HMM decoder was tuned on the untuned model's probabilities (`experiments/hpo/tuned_vs_untuned.csv`) |
+| HMM decoder parameters | **train-tuned** (`models/hmm_params.json`: λ = 0.276, β = 13.2 m, G = 175 s) | untuned defaults score 0.936 vs 0.928 on student-test, but the gap comes from one trip (77: +4.3 pts; defaults better on 3 of 10 trips, worse on 4). Switching would mean selecting on student-test noise, so student-test stays a clean test (`experiments/results/hmm/ablation_per_trip*.csv`) |
+| Labels | version 1 (`heading_weight_m = 0`) | see §4 note on the U-turn limitation |
+
+Deployed pipeline on student-test: top-1 0.928, route continuity 0.904, route F1 0.974
+(classifier only: 0.896 / 0.809 / 0.839).
