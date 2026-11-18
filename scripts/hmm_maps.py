@@ -1,4 +1,4 @@
-"""Report maps: where HMM decoding fixed the classifier, and where it did not help (PLAN section 8).
+"""Report maps: where HMM decoding fixed the classifier, and where it did not help.
 
 Run after scripts.hmm_ablation (uses the tuned models/hmm_params.json):
     python -m scripts.hmm_maps

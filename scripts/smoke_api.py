@@ -6,7 +6,7 @@ Run (API already running, from either laptop):
 It sends {"score": false}, so the API skips scoring entirely: no metrics are computed,
 returned or written to the API log, and the reference route is not even read. On the
 evaluator trips we may check that nothing crashes, but we must not see or tune on their
-scores (PLAN section 9). It prints only the status code, timing and response size per trip.
+scores. It prints only the status code, timing and response size per trip.
 """
 import argparse
 import sys

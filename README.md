@@ -49,7 +49,7 @@ on student-test. The full table is in `experiments/results/model_comparison.csv`
 | `models/` | Saved models (`*.joblib`) and the HMM decoder configuration (`hmm_params.json`) |
 | `experiments/` | Result CSV/JSON files, HPO study (`hpo/`), HMM results (`results/hmm/`), run logs |
 | `reports/` | **Technical report** (`PathSnap_Technical_Report.pdf`), figures (`figures/`), map and UI screenshots (`figures/maps/`, `figures/ui/`), interactive Folium maps (`maps/`) |
-| `docs/` | Plan, deployment guide, data-quality log, report notes |
+| `docs/` | Deployment guide (`DEPLOY.md`) and data-quality log (`data_quality.md`) |
 | `tests/` | Tests for metrics, the data pipeline, the leakage guard and the HMM |
 | `data/raw/` | Raw trip files. **Not committed.** |
 
@@ -121,8 +121,7 @@ never used for training, tuning or selection.
 | 12. Full-trip route maps and screenshots | `python -m scripts.report_maps` | `reports/maps/st_route_*.html`, `reports/figures/maps/*.png` |
 | 13. Technical report | `python -m scripts.build_report` | `reports/PathSnap_Technical_Report.pdf` (tables read from the result files) |
 
-See [docs/PLAN.md](docs/PLAN.md) for the design and module contracts, and
-[docs/data_quality.md](docs/data_quality.md) for the data issues found and how they were handled.
+See [docs/data_quality.md](docs/data_quality.md) for the data issues found and how they were handled.
 
 ## Data partitions
 

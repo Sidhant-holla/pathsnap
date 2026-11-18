@@ -1,4 +1,4 @@
-"""FAKE candidate and points tables with the real schema (PLAN §4, features.FEATURE_COLUMNS),
+"""FAKE candidate and points tables with the real schema (features.FEATURE_COLUMNS),
 for testing the harness and model scripts. Never used for any reported result.
 
 They mimic the real data's awkward cases:

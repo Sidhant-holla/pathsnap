@@ -16,7 +16,7 @@ classifier's output on unseen trips, which is what the decoder sees in the API.
 Decoder parameters are chosen on train only and student_test is used once, for the
 report. The evaluator partition is never touched here.
 
-Methods (PLAN section 8):
+Methods:
   nearest      each point's nearest candidate arc (ties: lower arc_id)
   dist_hmm     HMM with Gaussian distance emissions (no classifier)
   clf          classifier argmax per point (no HMM)

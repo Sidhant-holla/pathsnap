@@ -251,12 +251,12 @@ def build_story():
               Paragraph("Technical Report: UE24CS352A Machine Learning Hackathon, PES University (RR Campus)",
                         ParagraphStyle("sub2", parent=B, alignment=TA_CENTER, fontSize=10.5)),
               Spacer(1, 14 * mm)]
-    team = [["Member", "Name", "Main responsibility"],
-            ["A", "Sidhant Holla", "Data pipeline: projection, labels, candidates, features; MLP model"],
-            ["B", "Samarth Kulkarni", "Exploratory data analysis, visualisation and maps; Naive Bayes and KNN models"],
-            ["C", "Greeshma Gangadhar", "Evaluation framework; Logistic Regression, Random Forest, LightGBM, ranker; Bayesian HPO"],
-            ["D", "Pranav Prabhakar", "Road graph, HMM/Viterbi decoding, API, user interface and deployment"]]
-    table(team, [16, 38, 120])
+    team = [["Member", "Name", "SRN", "Main responsibility"],
+            ["A", "Sidhant Holla", "PES1UG24AM466", "Data pipeline: projection, labels, candidates, features; MLP model"],
+            ["B", "Samarth P Kulkarni", "PES1UG24AM464", "Exploratory data analysis, visualisation and maps; Naive Bayes and KNN models"],
+            ["C", "Greeshma G", "PES1UG24AM462", "Evaluation framework; Logistic Regression, Random Forest, LightGBM, ranker; Bayesian HPO"],
+            ["D", "Pranav Prabhakar", "PES1UG24AM463", "Road graph, HMM/Viterbi decoding, API, user interface and deployment"]]
+    table(team, [17, 34, 29, 94])
     story += [Spacer(1, 8 * mm),
               Paragraph(f"Code, results and models: <link href='{REPO_URL}'>{REPO_URL}</link>",
                         ParagraphStyle("link", parent=B, alignment=TA_CENTER)),
@@ -318,8 +318,11 @@ def build_story():
     p("For GPS data the real \"missing values\" are <b>missing readings in time</b>. Most steps are exactly one second "
       f"apart ({pct(0.9668)}), but {int((inv.gaps_gt10s > 0).sum())} of 90 trips have at least one gap longer than 10 seconds, "
       f"and {int((inv.gaps_gt60s > 0).sum())} have a gap longer than a minute. In the extreme case, trip 90 has a 42-hour gap. "
-      "We decided <b>not to fill these gaps</b>: inventing GPS points would invent evidence. Instead we split a trip into "
-      "separate pieces wherever the gap is longer than 10 seconds, and nothing in our pipeline looks across a gap.")
+      "We decided <b>not to fill these gaps</b>: inventing GPS points would invent evidence. Instead, two different limits "
+      "are used. When we compute features, the trip is split into pieces at every gap longer than 10 seconds, so the "
+      "heading smoothing and the neighbourhood features never mix readings from both sides of a gap. The HMM uses its own, "
+      "larger limit of 175 seconds (tuned on the training trips, Section 5): it cuts the trip only at gaps longer than "
+      "that, and shorter gaps (10 to 175 seconds) are bridged using driving distances on the road network.")
     fig(FIGURES_DIR / "eda" / "02_missing_seconds_per_trip.png", 170, "Share of each trip's duration with no GPS reading (blue = train, orange = student-test).")
     fig(FIGURES_DIR / "eda" / "03_sampling_gaps.png", 165, "Left: time between consecutive readings. Right: the 15 trips with the largest single gap.")
 
@@ -804,6 +807,11 @@ def build_story():
     p("All code, saved models and result files are in the repository. Seeds are fixed at 42. The README lists the commands "
       "that regenerate every number and figure in this report, in order: features, models, MLP, HPO, comparison plots, "
       "over/underfitting check, feature ablation, HMM tuning and ablation, maps, and finally this report.")
+
+    h2("Transparent use of AI tools")
+    p("In the interest of transparency: we used AI tools during this project to help integrate the code written by "
+      "different team members, to debug problems, and to write boilerplate code. All experiments were run with the code "
+      "in this repository, and every number, table and figure in this report comes from the result files it produced.")
 
 
 # ============================================================================ build

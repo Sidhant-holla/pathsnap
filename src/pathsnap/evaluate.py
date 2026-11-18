@@ -3,7 +3,7 @@
 Every model is evaluated through these functions, so all numbers in the report use
 identical definitions and data partitions.
 
-Inputs (built by scripts/build_features.py, PLAN §4):
+Inputs (built by scripts/build_features.py):
   candidates table  one row per (trip_id, obs_idx, arc_id):
                     trip_id, obs_idx, t, arc_id, label (0/1), label_low_conf, f_*
   points table      one row per GPS point, INCLUDING points with no candidates:
@@ -16,9 +16,9 @@ the points that appear in the candidates table.
 "Confident" points are those within 50 m of the reference route (low_conf == False).
 Low-confidence points are mostly off-network episodes where the label itself is
 unreliable, so confident points are the MAIN evaluation set and all points the secondary
-one (PLAN §4). Models are trained on confident rows only.
+one. Models are trained on confident rows only.
 
-Metric definitions (PLAN §6):
+Metric definitions:
   * top1_conf       PRIMARY selection metric. For each confident GPS point, take the
                     candidate with the highest probability and check it is the labelled
                     arc. Points whose labelled arc is not a candidate count as wrong. We

@@ -1,4 +1,4 @@
-"""Route-level helpers and metrics for decoded paths (PLAN section 6, "after decoding").
+"""Route-level helpers and metrics for decoded paths.
 
 Pure functions: nothing here reads files, and in particular nothing here loads the
 reference route. Callers that are ALLOWED to see the route (the ablation script and the

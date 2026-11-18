@@ -1,4 +1,4 @@
-"""HMM map matching decoded with Viterbi (PLAN section 8).
+"""HMM map matching decoded with Viterbi.
 
 Hidden state at GPS point t: one of that point's candidate arcs (we keep each
 candidate's arc_id and its projected position proj_frac on the arc).
