@@ -1,7 +1,7 @@
 # Report notes, Member D: HMM/Viterbi (report §5), maps (§6), API/UI/deployment (§7)
 
-These are **notes, not report text**. Write the sections in your own words (brief §8: report
-content is checked for AI-generated text, and each of us must be able to explain it in the viva).
+These are **notes, not report text**. Write the sections in your own words; each of us must be
+able to explain them in the viva.
 Every number below comes from a file in the repo; the file is named next to it so the report
 stays verifiable.
 
