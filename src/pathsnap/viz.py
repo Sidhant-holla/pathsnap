@@ -67,15 +67,20 @@ def _legend(entries: list[tuple[str, str]]) -> folium.Element:
 
 
 def trip_map(trip: Trip, reference_route=None, predicted_route=None, show_network: bool = True,
-             network_buffer_m: float = 150.0, max_gps_points: int = 3000, title: str | None = None) -> folium.Map:
+             network_buffer_m: float = 150.0, max_gps_points: int = 3000, title: str | None = None,
+             tiles: str = "OpenStreetMap") -> folium.Map:
     """Interactive map of one trip.
 
     reference_route / predicted_route: lists of arc ids (consecutive duplicates are fine,
     so per-point predictions can be passed directly). Leave reference_route=None for
     anything shown in the UI.
+
+    Drawing order (bottom to top): road network, GPS points, reference route, predicted
+    route. The routes go on top so a dense GPS trace can't hide them. Basemap tiles are
+    OpenStreetMap's, which need no API key.
     """
     track = trip.track
-    m = folium.Map(tiles="OpenStreetMap", control_scale=True)
+    m = folium.Map(tiles=tiles, control_scale=True)
     legend = []
 
     if show_network:
@@ -84,6 +89,14 @@ def trip_map(trip: Trip, reference_route=None, predicted_route=None, show_networ
                         color=COLORS["network"], weight=2, opacity=0.6).add_to(fg)
         fg.add_to(m)
         legend.append(("Road network", COLORS["network"]))
+
+    fg = folium.FeatureGroup(name="GPS observations")
+    step = max(1, len(track) // max_gps_points)
+    for row in track.iloc[::step].itertuples():
+        folium.CircleMarker([row.lat, row.lon], radius=2, color=COLORS["gps"], fill=True,
+                            fill_opacity=0.5, weight=0, tooltip=f"t = {row.t:.0f} s").add_to(fg)
+    fg.add_to(m)
+    legend.append((f"GPS points{' (every %dth)' % step if step > 1 else ''}", COLORS["gps"]))
 
     if reference_route is not None:
         fg = folium.FeatureGroup(name="Reference route")
@@ -98,14 +111,6 @@ def trip_map(trip: Trip, reference_route=None, predicted_route=None, show_networ
                         color=COLORS["predicted"], weight=3, opacity=0.9, dash_array="6 4").add_to(fg)
         fg.add_to(m)
         legend.append(("Predicted route", COLORS["predicted"]))
-
-    fg = folium.FeatureGroup(name="GPS observations")
-    step = max(1, len(track) // max_gps_points)
-    for row in track.iloc[::step].itertuples():
-        folium.CircleMarker([row.lat, row.lon], radius=2, color=COLORS["gps"], fill=True,
-                            fill_opacity=0.8, weight=0, tooltip=f"t = {row.t:.0f} s").add_to(fg)
-    fg.add_to(m)
-    legend.append((f"GPS points{' (every %dth)' % step if step > 1 else ''}", COLORS["gps"]))
 
     first, last = track.iloc[0], track.iloc[-1]
     folium.Marker([first.lat, first.lon], tooltip="Start", icon=folium.Icon(color="green", icon="play")).add_to(m)
