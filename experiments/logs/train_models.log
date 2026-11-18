@@ -1,0 +1,27 @@
+
+=== logreg (linear) on 1,523,093 train rows, 18 features
+  fold 0: top1_conf=0.8441 top1_all=0.8268 logloss=0.1761 fit=2.3s
+  fold 1: top1_conf=0.9049 top1_all=0.9014 logloss=0.1789 fit=2.2s
+  fold 2: top1_conf=0.8484 top1_all=0.5586 logloss=0.1531 fit=2.4s
+  fold 3: top1_conf=0.8667 top1_all=0.7729 logloss=0.1327 fit=2.3s
+  fold 4: top1_conf=0.8398 top1_all=0.8155 logloss=0.1613 fit=2.2s
+  CV  top1_conf 0.8608 +/- 0.0267 | top1_all 0.7750 | obsF1 0.7741 | candF1 0.8793 | logloss 0.1604
+  ST  top1_conf 0.8600 | top1_all 0.8588 | obsF1 0.7701 | candF1 0.8839 | logloss 0.1473 | continuity 0.7733 | train 2.7s | infer 0.3 ms/1k rows
+
+=== rf (ensemble (bagging)) on 1,523,093 train rows, 18 features
+  fold 0: top1_conf=0.8632 top1_all=0.8454 logloss=0.0918 fit=41.4s
+  fold 1: top1_conf=0.9182 top1_all=0.9147 logloss=0.0593 fit=29.7s
+  fold 2: top1_conf=0.8690 top1_all=0.5722 logloss=0.0813 fit=41.6s
+  fold 3: top1_conf=0.8912 top1_all=0.7947 logloss=0.0585 fit=43.3s
+  fold 4: top1_conf=0.8471 top1_all=0.8227 logloss=0.0841 fit=42.0s
+  CV  top1_conf 0.8777 +/- 0.0276 | top1_all 0.7899 | obsF1 0.8306 | candF1 0.9281 | logloss 0.0750
+  ST  top1_conf 0.8903 | top1_all 0.8890 | obsF1 0.8380 | candF1 0.9360 | logloss 0.0630 | continuity 0.8031 | train 50.1s | infer 1.8 ms/1k rows
+
+=== lgbm (boosting) on 1,523,093 train rows, 18 features
+  fold 0: top1_conf=0.8692 top1_all=0.8513 logloss=0.0902 fit=7.3s
+  fold 1: top1_conf=0.9209 top1_all=0.9173 logloss=0.0575 fit=8.1s
+  fold 2: top1_conf=0.8725 top1_all=0.5745 logloss=0.0782 fit=7.8s
+  fold 3: top1_conf=0.8957 top1_all=0.7987 logloss=0.0562 fit=12.3s
+  fold 4: top1_conf=0.8474 top1_all=0.8230 logloss=0.0843 fit=15.8s
+  CV  top1_conf 0.8811 +/- 0.0280 | top1_all 0.7930 | obsF1 0.8368 | candF1 0.9298 | logloss 0.0733
+  ST  top1_conf 0.8964 | top1_all 0.8951 | obsF1 0.8485 | candF1 0.9387 | logloss 0.0600 | continuity 0.8085 | train 22.7s | infer 2.6 ms/1k rows
