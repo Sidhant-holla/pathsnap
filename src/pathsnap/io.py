@@ -37,11 +37,30 @@ def _read(path: Path, names: list[str], dtype) -> pd.DataFrame:
     return pd.read_csv(path, sep=r"\s+", header=None, names=names, dtype=dtype)
 
 
-def list_trips(partition: str, data_root: Path = DATA_ROOT) -> list[str]:
-    """Sorted trip IDs in a partition (folder names, e.g. '00000001')."""
+# Folder names we accept for each partition. The evaluator data is only handed over at
+# the final demo, so we don't know its exact folder name in advance.
+PARTITION_ALIASES = {
+    "train": ["train", "training"],
+    "student_test": ["student_test", "student_testing", "student-test"],
+    "evaluator_test": ["evaluator_test", "evaluator_testing", "evaluator-test", "evaluator", "eval", "test"],
+}
+
+
+def partition_dir(partition: str, data_root: Path = DATA_ROOT) -> Path:
+    """Folder of a partition: the first existing alias (case-insensitive), else the canonical name."""
     if partition not in PARTITIONS:
         raise ValueError(f"unknown partition {partition!r}; expected one of {PARTITIONS}")
-    folder = Path(data_root) / partition
+    root = Path(data_root)
+    existing = {p.name.lower(): p for p in root.iterdir() if p.is_dir()} if root.exists() else {}
+    for alias in PARTITION_ALIASES[partition]:
+        if alias.lower() in existing:
+            return existing[alias.lower()]
+    return root / partition
+
+
+def list_trips(partition: str, data_root: Path = DATA_ROOT) -> list[str]:
+    """Sorted trip IDs in a partition (folder names, e.g. '00000001')."""
+    folder = partition_dir(partition, data_root)
     if not folder.exists():
         return []
     return sorted(p.name for p in folder.iterdir() if p.is_dir())
@@ -50,14 +69,14 @@ def list_trips(partition: str, data_root: Path = DATA_ROOT) -> list[str]:
 def find_partition(trip_id: str, data_root: Path = DATA_ROOT) -> str:
     """Which partition folder a trip lives in (trip IDs are unique across partitions)."""
     for partition in PARTITIONS:
-        if (Path(data_root) / partition / trip_id).is_dir():
+        if (partition_dir(partition, data_root) / trip_id).is_dir():
             return partition
     raise FileNotFoundError(f"trip {trip_id} not found under {data_root}")
 
 
 def trip_dir(trip_id: str, partition: str | None = None, data_root: Path = DATA_ROOT) -> Path:
     partition = partition or find_partition(trip_id, data_root)
-    return Path(data_root) / partition / trip_id
+    return partition_dir(partition, data_root) / trip_id
 
 
 def load_route(trip_id: str, partition: str | None = None, data_root: Path = DATA_ROOT) -> list[int]:
