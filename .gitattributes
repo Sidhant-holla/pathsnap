@@ -3,3 +3,5 @@
 *.png binary
 *.joblib binary
 *.parquet binary
+*.pdf binary
+*.db binary
