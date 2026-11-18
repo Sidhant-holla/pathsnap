@@ -3,6 +3,7 @@ _reference/
 
 # Raw dataset (distributed separately; see README)
 data/raw/*
+Student folder/
 !data/raw/.gitkeep
 data/interim/
 data/processed/
