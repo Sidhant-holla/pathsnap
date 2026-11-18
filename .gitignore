@@ -27,3 +27,6 @@ env/
 Thumbs.db
 .vscode/
 .idea/
+
+# Smoke-test outputs from --fake runs (never real results)
+**/_fake/
