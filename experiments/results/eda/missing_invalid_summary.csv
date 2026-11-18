@@ -1,0 +1,3 @@
+partition,nan_values,invalid_coords,duplicate_t,non_increasing_t,non_integer_t,jumps,isolated_nodes,self_loops,duplicate_arcs,zero_length_arcs,trips_with_missing_files
+student_test,0,0,0,0,0,1,0,2,128,6,0
+train,0,0,0,0,9659,150,0,22,1775,100,0

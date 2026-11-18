@@ -1,0 +1,3 @@
+partition,trips,files_missing,points_total,points_median,points_min,points_max,nodes_median,arcs_median,arcs_max,route_arcs_median,duration_min_median,path_km_median,size_mb_total
+student_test,10,0,19160,1420.0,262,3958,6596.5,13145.0,56027,250.0,30.2,20.8,4.2
+train,80,0,208417,1529.0,361,19313,9608.0,19526.5,307392,280.0,28.5,23.3,85.6

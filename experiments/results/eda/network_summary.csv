@@ -1,0 +1,13 @@
+,median (student_test),median (train),min (all),max (all)
+n_nodes,6596.5,9608.0,299.0,155003.0
+n_arcs,13145.0,19526.5,649.0,307392.0
+isolated_nodes,0.0,0.0,0.0,0.0
+self_loops,0.0,0.0,0.0,8.0
+duplicate_arcs,3.5,2.0,0.0,322.0
+zero_length_arcs,0.0,0.0,0.0,14.0
+two_way_pct,93.3,95.1,35.1,100.0
+median_arc_m,31.9,24.6,6.8,85.1
+n_weak_components,11.0,20.0,1.0,421.0
+largest_wcc_pct,97.1,98.1,69.3,100.0
+n_strong_components,53.5,127.0,2.0,1942.0
+largest_scc_pct,96.1,96.4,63.6,100.0
