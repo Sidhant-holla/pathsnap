@@ -61,7 +61,7 @@ D = `docs/report_notes_D.md`. Data quality: `docs/data_quality.md`. Final decisi
 
 ## 7. API, UI and deployment (D §7, docs/DEPLOY.md)
 - [x] Screenshots of the working UI: `reports/figures/ui/` (student-test). Optional: add demo-day ones to `reports/figures/deployment/`
-- [ ] Screenshots of successful API responses **on the CMD of the receiving laptop** (Laptop 1 console log lines): save to `reports/figures/deployment/`, then rerun `python -m scripts.build_report`
+- [x] Screenshots of successful API responses **on the CMD of the receiving laptop**: `reports/figures/deployment/laptop1_api_console_*.png` (two-laptop run, student-test)
 - [x] One sentence on the leakage design: the prediction never reads the route; only the server-side scorer does
 
 ## Also required

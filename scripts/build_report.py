@@ -752,6 +752,12 @@ def build_story():
         stem = path.stem.lower()
         trip = re.search(r"(\d{8})", stem)
         trip = trip.group(1) if trip else ""
+        if ("console" in stem or "cmd" in stem) and "startup" in stem:
+            return ("Two-laptop run, Laptop 1 console: the API starts (model lgbm, 10 trips) and receives its first requests "
+                    "from Laptop 2 (client 10.171.60.55), including crash-only checks where scoring is skipped.")
+        if ("console" in stem or "cmd" in stem) and "prediction" in stem:
+            return ("Two-laptop run, Laptop 1 console: successful POST /predict requests from Laptop 2 (status 200, about "
+                    "0.4–0.7 s each), with the time spent in each stage and the accuracy computed on the server.")
         if "console" in stem or "cmd" in stem:
             return "Two-laptop run, Laptop 1 console: the API's log lines for the incoming requests (trip, status, time per stage)."
         if "health" in stem:
