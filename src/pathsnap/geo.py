@@ -55,6 +55,7 @@ def point_to_segment(px, py, ax, ay, bx, by):
     Returns (dist_m, frac, qx, qy). frac in [0, 1] is how far along A->B the closest
     point Q lies (0 = at A, 1 = at B). Zero-length segments are treated as a point.
     """
+    px, py, ax, ay, bx, by = (np.asarray(v, dtype=np.float64) for v in (px, py, ax, ay, bx, by))
     dx, dy = bx - ax, by - ay
     len2 = dx * dx + dy * dy
     with np.errstate(invalid="ignore", divide="ignore"):

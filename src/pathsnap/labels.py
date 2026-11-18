@@ -21,6 +21,16 @@ directions are at the same distance) and roads the car revisits later.
 
 Points that still end up far from their arc are flagged `low_conf`: either the GPS fix
 is bad, or the reference route doesn't match the track there.
+
+Known limitation, and an optional fix (`heading_weight_m`): on the segment where the car
+does a U-turn on a two-way street, both directions are at exactly the same distance, so
+distance alone cannot say where the turn happened. With heading_weight_m > 0, being
+labelled on an arc that points AGAINST the direction of travel (more than 90 degrees off)
+costs up to that many extra metres. On the 90 dev trips, heading_weight_m=10 changes 0.95%
+of labels. 73% of those are flips between the two directions of the same road, and where
+the car is clearly moving, an independent +/-5 s heading agrees with the new label in 874
+cases vs 151 for the old one. The default (0) keeps the labels used by the logged
+experiments.
 """
 import numpy as np
 import pandas as pd
@@ -32,7 +42,7 @@ LOW_CONF_DIST_M = 50.0  # see scripts/radius_analysis.py for how this was chosen
 
 
 def align_route(trip: Trip, edge_penalty_m: float = 5.0, low_conf_dist_m: float = LOW_CONF_DIST_M,
-                chunk: int = 500) -> pd.DataFrame:
+                heading_weight_m: float = 0.0, chunk: int = 500) -> pd.DataFrame:
     """Assign every GPS point to one reference-route arc.
 
     The trip must be projected (geo.project_trip) and loaded with with_route=True.
@@ -48,6 +58,12 @@ def align_route(trip: Trip, edge_penalty_m: float = 5.0, low_conf_dist_m: float 
 
     n, m = len(px), len(route)
     pos = np.arange(m)
+    if heading_weight_m > 0:
+        from .features import point_features              # car heading, smoothed over +/-2 s
+        from .geo import angle_diff_deg
+        pf = point_features(trip)
+        heading, reliable = pf["heading"].to_numpy(), pf["heading_reliable"].to_numpy()
+        arc_bearing = geom["bearing"].to_numpy()
     # backpointer[i, j] = route position of point i-1 on the best path that puts point i at j
     backpointer = np.empty((n, m), dtype=np.int16 if m < 32_000 else np.int32)
 
@@ -56,6 +72,14 @@ def align_route(trip: Trip, edge_penalty_m: float = 5.0, low_conf_dist_m: float 
         stop = min(n, start + chunk)
         dist, *_ = point_to_segment(px[start:stop, None], py[start:stop, None],
                                     ax[None, :], ay[None, :], bx[None, :], by[None, :])
+        if heading_weight_m > 0:
+            # Driving AGAINST an arc (more than 90 degrees off its bearing) costs up to
+            # heading_weight_m extra metres. Differences up to 90 degrees (turning at a
+            # junction, where the smoothed heading lags) cost nothing, so this only
+            # separates the two directions of a two-way street.
+            diff = angle_diff_deg(heading[start:stop, None], arc_bearing[None, :])
+            mismatch = np.clip((diff - 90.0) / 90.0, 0.0, 1.0)
+            dist = dist + heading_weight_m * mismatch * reliable[start:stop, None]
         for k in range(stop - start):
             i = start + k
             if i == 0:
