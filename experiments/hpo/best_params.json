@@ -1,0 +1,31 @@
+{
+  "model": "lgbm",
+  "objective": "mean GroupKFold(5) observation top-1 on confident points, train trips",
+  "n_trials": 51,
+  "trial_states": {
+    "COMPLETE": 35,
+    "PRUNED": 15,
+    "RUNNING": 1
+  },
+  "best_trial": 24,
+  "best_value": 0.8821644201844532,
+  "best_params": {
+    "learning_rate": 0.010301495796862232,
+    "num_leaves": 202,
+    "min_child_samples": 24,
+    "colsample_bytree": 0.7893899494545888,
+    "subsample": 0.6587053424339548,
+    "reg_lambda": 3.504467782483359,
+    "reg_alpha": 6.379644283339348
+  },
+  "best_user_attrs": {
+    "best_iteration_last_fold": 902,
+    "cand_macro_f1_mean": 0.9299429598071821,
+    "fit_time_s": 184.91228480000063,
+    "log_loss_mean": 0.07370442532303069,
+    "obs_macro_f1_conf_mean": 0.8394808409168855,
+    "top1_conf_std": 0.02920784980147382
+  },
+  "search_time_s_this_run": 6776.9273493,
+  "search_time_s_all_trials": 8072.738755
+}
