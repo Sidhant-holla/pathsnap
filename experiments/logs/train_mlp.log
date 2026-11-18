@@ -1,0 +1,9 @@
+=== mlp on 1,523,093 train rows, 18 features
+  fold 0: top1_conf=0.8612 top1_all=0.8435 logloss=0.0905 fit=22.8s
+  fold 1: top1_conf=0.9119 top1_all=0.9084 logloss=0.0633 fit=70.9s
+  fold 2: top1_conf=0.8670 top1_all=0.5708 logloss=0.0850 fit=36.1s
+  fold 3: top1_conf=0.8914 top1_all=0.7949 logloss=0.0601 fit=31.8s
+  fold 4: top1_conf=0.8476 top1_all=0.8232 logloss=0.0866 fit=26.9s
+  CV  top1_conf 0.8758 +/- 0.0256 | obsF1 0.8307 | candF1 0.9254 | logloss 0.0771
+  ST  top1_conf 0.8930 | top1_all 0.8917 | obsF1 0.8413 | candF1 0.9343 | logloss 0.0631 | continuity 0.8191 | train 48.7s | infer 0.5 ms/1k rows
+  best epoch per fold [4, 30, 11, 8, 6], final model best epoch 12
