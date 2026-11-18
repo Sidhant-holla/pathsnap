@@ -262,11 +262,7 @@ def build_story():
     table(team, [17, 34, 29, 94])
     story += [Spacer(1, 8 * mm),
               Paragraph(f"Code, results and models: <link href='{REPO_URL}'>{REPO_URL}</link>",
-                        ParagraphStyle("link", parent=B, alignment=TA_CENTER)),
-              Spacer(1, 4 * mm),
-              Paragraph("Every number in this report is read from the result files in the repository "
-                        "(<font face='Courier'>python -m scripts.build_report</font> rebuilds this PDF).",
-                        ParagraphStyle("note", parent=CAP))]
+                        ParagraphStyle("link", parent=B, alignment=TA_CENTER))]
     story.append(PageBreak())
 
     # ============================================================================ 1. introduction
